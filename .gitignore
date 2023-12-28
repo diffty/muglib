@@ -2,3 +2,5 @@
 build/
 Makefile
 CMakeCache.txt
+Makefile
+CMakeFiles
