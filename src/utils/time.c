@@ -27,6 +27,7 @@
 #endif
 
 #ifdef TARGET_PSVITA
+#include <time.h>
 #include <psp2/rtc.h>
 #endif
 
@@ -76,14 +77,14 @@ double get_current_time() {
         return currentTime;
     
     #elif TARGET_PSVITA
-        SceDateTime time;
+        SceDateTime dt;
 
-        if (sceRtcGetCurrentClockLocalTime(&time) < 0) {
+        if (sceRtcGetCurrentClockLocalTime(&dt) < 0) {
             //psvDebugScreenPrintf("Error while retrieving clock!");
             //sceKernelExitProcess(1);
         }
 
-		return ((double) time.second + ((double) time.microsecond) / 1000000.);
+		return ((double) time(NULL) + ((double) dt.microsecond) / 1000000.);
     #endif
 
     return -1;
