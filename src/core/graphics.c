@@ -20,11 +20,36 @@ extern "C" FILE * __cdecl __iob_func(void) { return _iob; }
 #endif
 
 
-void gfx_init_graphics_system(GraphicsSystem* pGfxSys) {
-    pGfxSys->framebuffer[0].width = SCREEN_WIDTH;
-    pGfxSys->framebuffer[0].height = SCREEN_HEIGHT;
-    pGfxSys->framebuffer[0].colorDepth = SCREEN_BPP;
 
+void gfx_create_display_drawbuffer(drawbuffer* framebuffer) {
+    framebuffer->width = SCREEN_WIDTH;
+    framebuffer->height = SCREEN_HEIGHT;
+    framebuffer->colorDepth = SCREEN_BPP;
+
+    #ifdef TARGET_PSVITA
+        framebuffer->mutex = sceKernelCreateMutex("log_mutex", 0, 0, NULL);
+
+        SceUID displayblock = sceKernelAllocMemBlock("display",
+                                                    SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW,
+                                                    // looks like vita buffer size must be 256KB aligned (source: debugScreen.c)
+                                                    (2 * 1024 * 1024),  
+                                                    NULL);
+
+        sceKernelGetMemBlockBase(displayblock, (void**) &framebuffer->buffer);
+
+        framebuffer->platformFrameBuffer = (SceDisplayFrameBuf) {
+            sizeof(SceDisplayFrameBuf),
+            framebuffer->buffer,
+            framebuffer->width,     // this parameter is for real memory framebuffer size
+            0,
+            framebuffer->width,
+            framebuffer->height
+        };
+    #endif
+}
+
+
+void gfx_init_graphics_system(GraphicsSystem* pGfxSys) {
     pGfxSys->drawBufBlitRect.x = 0;
     pGfxSys->drawBufBlitRect.y = 0;
     pGfxSys->drawBufBlitRect.w = SCREEN_WIDTH;
@@ -34,6 +59,15 @@ void gfx_init_graphics_system(GraphicsSystem* pGfxSys) {
     pGfxSys->screenBufBlitRect.y = 0;
     pGfxSys->screenBufBlitRect.w = SCREEN_WIDTH * SCREEN_SCALE;
     pGfxSys->screenBufBlitRect.h = SCREEN_HEIGHT * SCREEN_SCALE;
+
+    pGfxSys->framebuffer = (drawbuffer*) malloc(2 * sizeof(drawbuffer));
+
+    gfx_create_display_drawbuffer(&pGfxSys->framebuffer[0]);
+    gfx_create_display_drawbuffer(&pGfxSys->framebuffer[1]);
+
+    pGfxSys->currFrontbufferIdx = 1;
+    pGfxSys->currBackbufferIdx = 0;
+
 
     #ifdef TARGET_3DS
         gfxInitDefault();
@@ -55,21 +89,27 @@ void gfx_init_graphics_system(GraphicsSystem* pGfxSys) {
         pGfxSys->framebuffer[0].reverse = true;
     
     #elif TARGET_PSVITA
-        pGfxSys->framebuffer[0].mutex = sceKernelCreateMutex("log_mutex", 0, 0, NULL);
-        SceUID displayblock = sceKernelAllocMemBlock("display", SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW, (2 * 1024 * 1024), NULL);  // looks like vita buffer size must be 256KB aligned (source: debugScreen.c)
-        sceKernelGetMemBlockBase(displayblock, (void**) &pGfxSys->framebuffer[0].buffer);
-        SceDisplayFrameBuf frame = { sizeof(frame),
-                                     pGfxSys->framebuffer[0].buffer,
-                                     pGfxSys->framebuffer[0].width,     // this parameter is for real memory framebuffer size
-                                     0,
-                                     pGfxSys->framebuffer[0].width,
-                                     pGfxSys->framebuffer[0].height };
-        
         int ret;
-        if (ret = sceDisplaySetFrameBuf(&frame, SCE_DISPLAY_SETBUF_NEXTFRAME) < 0) {
+        if (ret = sceDisplaySetFrameBuf(&pGfxSys->framebuffer[pGfxSys->currBackbufferIdx].platformFrameBuffer,
+                                        SCE_DISPLAY_SETBUF_NEXTFRAME) < 0) {
+
             printf("Can't set framebuffer. sceDisplaySetFrameBuf returned %d.", ret);
         }
     
+    #endif
+}
+
+void gfx_swap_buffers(GraphicsSystem* pGfxSys) {
+    #if TARGET_PSVITA        
+        pGfxSys->currFrontbufferIdx = (pGfxSys->currFrontbufferIdx + 1) % 2;
+        pGfxSys->currBackbufferIdx = (pGfxSys->currBackbufferIdx + 1) % 2;
+
+        int ret;
+        if (ret = sceDisplaySetFrameBuf(&pGfxSys->framebuffer[pGfxSys->currFrontbufferIdx].platformFrameBuffer,
+                                        SCE_DISPLAY_SETBUF_NEXTFRAME) < 0) {
+
+            psvDebugScreenPrintf("Can't set framebuffer. sceDisplaySetFrameBuf returned %d.", ret);
+        }
     #endif
 }
 
@@ -153,6 +193,9 @@ void gfx_swap_buffer() {
 void gfx_wait_for_blank() {
     #ifdef TARGET_3DS
         gspWaitForVBlank();
+    
+    #elif TARGET_PSVITA
+        sceDisplayWaitVblankStart();
 
     #endif
 }
