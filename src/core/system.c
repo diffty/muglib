@@ -65,6 +65,7 @@ void sys_init_console() {
     #elif TARGET_PSVITA
         // Initialize debug screen
         psvDebugScreenInit();
+        psvDebugScreenSetFont(psvDebugScreenScaleFont2x(psvDebugScreenGetFont()));
 
     #endif
 }
