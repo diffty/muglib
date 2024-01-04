@@ -10,11 +10,18 @@
 #elif TARGET_3DS
     #include "../platform/3ds/inputmap.h"
 
+#else
+    #define NO_TARGET_SPECIFIED
+
 #endif
 
 
 int get_platform_joy_button_code(EJoy muglibJoyBtnCode) {
-    return JOY_BUTTON_MAPPING[muglibJoyBtnCode];
+    #ifndef NO_TARGET_SPECIFIED
+        return JOY_BUTTON_MAPPING[muglibJoyBtnCode];
+    #else
+        return -1;
+    #endif
 }
 
 // TODO: Pour SDL on va avoir besoinde l'inverse
