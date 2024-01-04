@@ -43,14 +43,11 @@ void ime_init_ime_system(ImeSystem* imeSys, int maxLength) {
 
 void ime_free_ime_system(ImeSystem* imeSys) {
     free(imeSys->inputBuffer);
-    
-    #ifdef TARGET_PSVITA
-    #endif
 }
 
-void ime_toggle_ime_system(ImeSystem* imeSys) {
+void ime_toggle_ime_system(ImeSystem* imeSys, SceWChar16* initialText) {
     if (!imeSys->bVisible) {
-        imeSys->bVisible = 1;
+        imeSys->bVisible = true;
 
         imeSys->imeParam.supportedLanguages = SCE_IME_LANGUAGE_ENGLISH;
         imeSys->imeParam.languagesForced = SCE_TRUE;
@@ -58,7 +55,14 @@ void ime_toggle_ime_system(ImeSystem* imeSys) {
         imeSys->imeParam.option = 0;
         imeSys->imeParam.inputTextBuffer = imeSys->inputBuffer;
         imeSys->imeParam.handler = ime_event_handler;
-        imeSys->imeParam.initialText = "";
+
+        if (initialText == NULL) {
+            imeSys->imeParam.initialText = "";
+        }
+        else {
+            imeSys->imeParam.initialText = initialText;
+        }
+
         imeSys->imeParam.maxTextLength = (SceUInt32) imeSys->maxLength;
         imeSys->imeParam.enterLabel = SCE_IME_ENTER_LABEL_DEFAULT;
         imeSys->imeParam.work = imeSys->imeWork;
@@ -70,7 +74,7 @@ void ime_toggle_ime_system(ImeSystem* imeSys) {
         }
     }
     else {
-        imeSys->bVisible = 0;
+        imeSys->bVisible = false;
         sceImeClose();
     }
 }
