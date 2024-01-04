@@ -47,61 +47,61 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
 
-typedef struct {
+typedef struct vect2d {
 	long x;
 	long y;
 } vect2d;
 
-typedef struct {
+typedef struct vect2df {
 	float x;
 	float y;
 } vect2df;
 
-typedef struct {
+typedef struct size2d {
 	long w;
 	long h;
 } size2d;
 
-typedef struct {
+typedef struct size2df {
 	float w;
 	float h;
 } size2df;
 
-typedef struct {
+typedef struct color3 {
 	unsigned int r;
 	unsigned int g;
 	unsigned int b;
 } color3;
 
-typedef struct {
+typedef struct color4 {
 	unsigned int r;
 	unsigned int g;
 	unsigned int b;
 	unsigned int a;
 } color4;
 
-typedef struct {
+typedef struct quad2d {
     vect2d tl;
     vect2d tr;
     vect2d bl;
     vect2d br;
 } quad2d;
 
-typedef struct {
+typedef struct quad2df {
     vect2df tl;
     vect2df tr;
     vect2df bl;
     vect2df br;
 } quad2df;
 
-typedef struct {
+typedef struct rect {
     long x;
     long y;
     long w;
     long h;
 } rect;
 
-typedef struct {
+typedef struct rectf {
     float x;
     float y;
     float w;
