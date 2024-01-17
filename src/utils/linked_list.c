@@ -1,5 +1,7 @@
 #include "linked_list.h"
 
+#include <string.h>
+
 
 void initList(LinkedList* pList) {
 	pList->pHead = NULL;

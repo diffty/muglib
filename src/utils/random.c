@@ -1,5 +1,6 @@
 #include "random.h"
 #include "../core/system.h"
+#include "../utils/time.h"
 
 
 int get_rand_int(int iMin, int iMax) {

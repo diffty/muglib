@@ -1,5 +1,7 @@
 #include "maths.h"
 
+#include <math.h>
+
 
 vect2df getNormalizedVect(vect2df vVect) {
 	vect2df vNormalizedVect;
