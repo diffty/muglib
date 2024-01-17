@@ -21,6 +21,8 @@ string(TOLOWER "${PLATFORM_TARGET}" PLATFORM_TARGET_LOWER)
 
 project(muglib)
 
+include(CTest)
+
 execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine OUTPUT_VARIABLE COMPILER_TARGET OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "The CXX compiler target architecture is ${COMPILER_TARGET}")
 
@@ -39,7 +41,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-  src/main.c
   src/core/types.h
   src/core/graphics.c
   src/core/system.c
@@ -48,12 +49,23 @@ add_library(${PROJECT_NAME}
   src/utils/time.c
   src/utils/random.c
   src/utils/maths.c
+  src/utils/array.h
+  src/utils/strings.h
   src/utils/linked_list.c
   src/graphics/drawing.c
   src/platform/defines.h
 )
 
 )
+
+add_executable(test_str tests/test_str.c)
+add_test(NAME test_str COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_str)
+target_link_libraries(test_str ${PROJECT_NAME})
+
+add_executable(test_list tests/test_list.c)
+add_test(NAME test_list COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_list)
+target_link_libraries(test_list ${PROJECT_NAME})
+
 
 target_link_libraries(${PROJECT_NAME}
   m
