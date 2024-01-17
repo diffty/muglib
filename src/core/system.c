@@ -5,28 +5,28 @@
 
 
 #ifdef TARGET_3DS
-#include <3ds.h>
+    #include <3ds.h>
 #endif
 
 #ifdef TARGET_SDL2
-#include <cstdio>
-#include <SDL2/SDL.h>
+    #include <cstdio>
+    #include <SDL2/SDL.h>
 #endif
 
 #ifdef TARGET_WIN
-#include <Windows.h>
+    #include <Windows.h>
 #endif
 
 #ifdef TARGET_OSX
-#include <mach/clock.h>
-#include <mach/mach.h>
-#include <time.h>
-#include <unistd.h>
+    #include <mach/clock.h>
+    #include <mach/mach.h>
+    #include <time.h>
+    #include <unistd.h>
 #endif
 
 #ifdef TARGET_PSVITA
-#define NO_psvDebugScreenInit
-#include "../platform/psvita/console/debugScreen.h"
+    #define NO_psvDebugScreenInit
+    #include "../platform/psvita/console/debugScreen.h"
 
 #endif
 
@@ -52,11 +52,9 @@ void sys_init_main_loop(System* pSystem) {
 
 void sys_init_console() {
     #if TARGET_3DS
-	
 	    consoleInit(GFX_TOP, NULL);
 	
     #elif TARGET_SDL || TARGET_SDL2
-
         /*AllocConsole();
         freopen("CONIN$", "r", stdin);
         freopen("CONOUT$", "w", stdout);
