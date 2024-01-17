@@ -1,18 +1,36 @@
 cmake_minimum_required(VERSION 3.20.0)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-  if(DEFINED ENV{VITASDK})
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
-    set(VITA_SDK_AVAILABLE FALSE)
-  else()
-    message(NOTICE "Please define VITASDK to point to your SDK path!")
-    set(VITA_SDK_AVAILABLE FALSE)
+if(PLATFORM_TARGET STREQUAL PSVITA)
+  if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    if(DEFINED ENV{VITASDK})
+      set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "toolchain file")
+    else()
+      message(FATAL_ERROR "Please define VITASDK to point to your SDK path!")
+    endif()
   endif()
 endif()
 
+if (NOT DEFINED PLATFORM_TARGET)
+  set(PLATFORM_TARGET "")
+endif()
+
+string(TOUPPER "${PLATFORM_TARGET}" PLATFORM_TARGET_UPPER)
+string(TOLOWER "${PLATFORM_TARGET}" PLATFORM_TARGET_LOWER)
 
 project(muglib)
+
+execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine OUTPUT_VARIABLE COMPILER_TARGET OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "The CXX compiler target architecture is ${COMPILER_TARGET}")
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/out/${COMPILER_TARGET}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/out/${COMPILER_TARGET}/lib)
+set(CMAKE_BINARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/out/${COMPILER_TARGET})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/out/${COMPILER_TARGET})
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 include_directories(
   platform/**
@@ -35,32 +53,28 @@ add_library(${PROJECT_NAME}
   src/platform/defines.h
 )
 
-set_target_properties(${PROJECT_NAME}
-  PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/out/lib"
-  ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/out/lib"
 )
 
 target_link_libraries(${PROJECT_NAME}
   m
 )
 
-if (VITA_SDK_AVAILABLE)
+if(PLATFORM_TARGET STREQUAL PSVITA)
   include("${VITASDK}/share/vita.cmake" REQUIRED)
 
   set(VITA_APP_NAME "Muglib")
   set(VITA_TITLEID  "MUG00001")
   set(VITA_VERSION  "00.01")
 
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -D TARGET_PSVITA")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-  add_library(${PROJECT_NAME}
+  add_library(${PROJECT_NAME}-${PLATFORM_TARGET_LOWER}
+    src/main.c
     src/platform/psvita/inputmap.h
     src/platform/psvita/console/debugScreen.c
   )
 
-  target_link_libraries(${PROJECT_NAME}
+  target_link_libraries(${PROJECT_NAME}-${PLATFORM_TARGET_LOWER}
+    ${PROJECT_NAME}
+
     SceDisplay_stub
     SceCtrl_stub
     SceTouch_stub
@@ -71,4 +85,6 @@ if (VITA_SDK_AVAILABLE)
     SceSysmodule_stub
     SceIme_stub
   )
+
+  target_compile_options(${PROJECT_NAME}-${PLATFORM_TARGET_LOWER} PUBLIC -D TARGET_${PLATFORM_TARGET_UPPER})
 endif()
