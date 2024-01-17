@@ -25,7 +25,7 @@ void str_free_string(String* s) {
 }
 
 void str_resize_string(String* s, int newSize) {
-    resizeArray(&s->data, s->size, newSize);
+    resize_array(&s->data, s->size, newAlignedSize);
     s->size = newSize;
 }
 
@@ -34,7 +34,7 @@ void str_copy(char** strDst, const char* strSrc) {
     int strSrcSize = strlen(strSrc);
 
     if (strSrcSize > strDstSize) {
-        resizeArray(strDst, strDstSize + 1, strSrcSize + 1);
+        resize_array(strDst, strDstSize + 1, strSrcSize + 1);
     }
     else if (strSrcSize < strDstSize) {
         memset(*strDst, '\0', strDstSize + 1);

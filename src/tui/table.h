@@ -30,7 +30,7 @@ void tui_add_row_to_table(TUITable* tuiTable, TUITableRow* tuiTableRow) {
         tuiTable->aRows = (TUITableRow*) malloc(sizeof(TUITableRow));
     }
     else {
-        resizeArray(&tuiTable->aRows,
+        resize_array(&tuiTable->aRows,
                     tuiTable->nbRows * sizeof(TUITableRow),
                     (tuiTable->nbRows+1) * sizeof(TUITableRow));
     }
@@ -63,7 +63,7 @@ void tui_redraw_table(TUITable* tuiTable, int windowWidth, int windowHeight) {
 void tui_set_table_row_cell(TUITableRow* tuiTableRow, int colNum, char* content) {
     int contentSize = strlen(content)+1;
 
-    resizeArray(&tuiTableRow->columnsData[colNum],
+    resize_array(&tuiTableRow->columnsData[colNum],
                 strlen(tuiTableRow->columnsData[colNum]+1),
                 contentSize);
 
