@@ -5,3 +5,6 @@ Makefile
 CMakeCache.txt
 Makefile
 CMakeFiles
+.cache
+*.cmake
+DartConfiguration.tcl
