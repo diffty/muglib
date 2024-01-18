@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../src/utils/list.h"
 #include "../src/utils/memory.h"
