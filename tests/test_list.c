@@ -73,7 +73,8 @@ int main() {
 
     List newCharPtrList = List(char*);
 
-    char testStr1[] = "cc sava";
+    char* testStr1 = malloc(8);
+    strcpy(testStr1, "cc sava");
     char testStr2[] = "Bonjour non";
 
     char** testPtrStr1 = &testStr1;
@@ -84,9 +85,15 @@ int main() {
 
     lst_append(&newCharPtrList, &testPtrStr2);
     print_memory_block_hex(newCharPtrList.data, newCharPtrList.dataSize);
-
+    
     printf("%s\n", *((char**) lst_get(&newCharPtrList, 0)));
     printf("%s\n", *((char**) lst_get(&newCharPtrList, 1)));
+
+    char** removedStr = (char**) lst_remove(&newCharPtrList, 0);
+    print_memory_block_hex(newCharPtrList.data, newCharPtrList.dataSize);
+    printf("Removed: %s\n", *removedStr);
+
+    printf("%s\n", *((char**) lst_get(&newCharPtrList, 0)));
 
     return 0;
 }
