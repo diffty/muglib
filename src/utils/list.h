@@ -30,6 +30,10 @@ List lst_create(int elementSize) {
     return newList;
 }
 
+void lst_free(List* pList) {
+    free(pList->data);
+}
+
 void* lst_get(List* pList, int n) {
     return (void*) pList->data + pList->elementSize * n;
 }

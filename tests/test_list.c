@@ -95,5 +95,10 @@ int main() {
 
     printf("%s\n", *((char**) lst_get(&newCharPtrList, 0)));
 
+    free(testStr1);
+
+    lst_free(&newIntList);
+    lst_free(&newCharPtrList);
+
     return 0;
 }
