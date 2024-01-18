@@ -86,7 +86,7 @@ int main() {
     lst_append(&newCharPtrList, &testPtrStr2);
     print_memory_block_hex(newCharPtrList.data, newCharPtrList.dataSize);
     
-    printf("%s\n", *((char**) lst_get(&newCharPtrList, 0)));
+    printf("%s\n", **((char***) lst_get(&newCharPtrList, 0)));
     printf("%s\n", *((char**) lst_get(&newCharPtrList, 1)));
 
     char** removedStr = (char**) lst_remove(&newCharPtrList, 0);
