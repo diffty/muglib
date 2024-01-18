@@ -30,8 +30,6 @@
 
 #endif
 
-#include "../utils/time.h"
-
 
 static System sys_instance;
 
@@ -41,6 +39,7 @@ System* sys_get_system_instance() {
 
 void sys_init_system(System* pSystem) {
     pSystem->isMainLoopRunning = 1;
+    pSystem->logAdapterList = List(LogAdapter*);
 	sys_init_main_loop(pSystem);
 }
 
@@ -48,6 +47,18 @@ void sys_init_main_loop(System* pSystem) {
 	pSystem->startLoopTime = get_current_time();
 	pSystem->prevLoopTime = pSystem->startLoopTime;
 	pSystem->deltaTime = pSystem->startLoopTime - pSystem->prevLoopTime;
+}
+
+void sys_add_logger_adapter(System* pSystem, LogAdapter* newLogAdapter) {
+    lst_append(&pSystem->logAdapterList, &newLogAdapter);
+}
+
+void sys_log_to_all_adapters(System* pSystem, char* s) {
+    int i;
+    for (i = 0; i < pSystem->logAdapterList.count; i++) {
+        LogAdapter* currLogAdapter = *((LogAdapter**) lst_get(&pSystem->logAdapterList, i));
+        currLogAdapter->printFunc(s);
+    }
 }
 
 void sys_init_console() {

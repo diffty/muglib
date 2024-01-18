@@ -49,14 +49,20 @@ add_library(${PROJECT_NAME}
   src/utils/time.c
   src/utils/random.c
   src/utils/maths.c
-  src/utils/array.h
-  src/utils/strings.h
+  src/utils/array.c
+  src/utils/list.c
+  src/utils/strings.c
   src/utils/linked_list.c
   src/graphics/drawing.c
   src/platform/defines.h
 )
 
+add_executable(test_csv 
+  src/utils/maths.c
+  tests/test_csv.c
 )
+
+add_test(NAME test_csv COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_csv)
 
 add_executable(test_str tests/test_str.c)
 add_test(NAME test_str COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_str)
@@ -65,6 +71,10 @@ target_link_libraries(test_str ${PROJECT_NAME})
 add_executable(test_list tests/test_list.c)
 add_test(NAME test_list COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_list)
 target_link_libraries(test_list ${PROJECT_NAME})
+
+add_executable(test_log tests/test_log.c)
+add_test(NAME test_log COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_log)
+target_link_libraries(test_log ${PROJECT_NAME})
 
 
 target_link_libraries(${PROJECT_NAME}
