@@ -1,8 +1,9 @@
 #include "time.h"
-#include "../core/system.h"
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "../core/system.h"
 
 #ifdef TARGET_3DS
 #include <3ds.h>
