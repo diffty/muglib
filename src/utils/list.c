@@ -25,7 +25,7 @@ void lst_free(List* pList) {
 }
 
 void* lst_get(List* pList, int n) {
-    return (void*) pList->data + pList->elementSize * n;
+    return (void*) (((char*) pList->data) + pList->elementSize * n);
 }
 
 void lst_insert(List* pList, void* pDataToAdd, int n) {
@@ -38,12 +38,12 @@ void lst_insert(List* pList, void* pDataToAdd, int n) {
     }
 
     if (n < pList->count) {
-        memmove(pList->data + pList->elementSize * (n + 1),
-                pList->data + pList->elementSize * n,
+        memmove(((char*) pList->data) + pList->elementSize * (n + 1),
+                ((char*) pList->data) + pList->elementSize * n,
                 pList->elementSize * (pList->count - n));
     }
 
-    memmove(pList->data + n * pList->elementSize,
+    memmove(((char*) pList->data) + n * pList->elementSize,
            pDataToAdd,
            pList->elementSize);
            
@@ -58,12 +58,12 @@ void* lst_remove(List* pList, int n) {
     void* pRemovedElement = *((void**) lst_get(pList, n));
 
     if (n < pList->count - 1) {
-        memmove(pList->data + pList->elementSize * n,
-                pList->data + pList->elementSize * (n+1),
+        memmove(((char*) pList->data) + pList->elementSize * n,
+                ((char*) pList->data) + pList->elementSize * (n+1),
                 pList->elementSize * (pList->count - (n + 1)));
     }
     pList->count--;
-    memset(pList->data + pList->elementSize * pList->count, 0, pList->elementSize);
+    memset(((char*) pList->data) + pList->elementSize * pList->count, 0, pList->elementSize);
 
     return pRemovedElement;
 }

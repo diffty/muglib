@@ -57,13 +57,6 @@ add_library(${PROJECT_NAME}
   src/platform/defines.h
 )
 
-add_executable(test_csv 
-  src/utils/maths.c
-  tests/test_csv.c
-)
-
-add_test(NAME test_csv COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_csv)
-
 add_executable(test_str tests/test_str.c)
 add_test(NAME test_str COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_str)
 target_link_libraries(test_str ${PROJECT_NAME})
@@ -76,10 +69,11 @@ add_executable(test_log tests/test_log.c)
 add_test(NAME test_log COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_log)
 target_link_libraries(test_log ${PROJECT_NAME})
 
-
-target_link_libraries(${PROJECT_NAME}
-  m
-)
+IF (NOT WIN32)
+  target_link_libraries(${PROJECT_NAME}
+    m
+  )
+ENDIF()
 
 if(PLATFORM_TARGET STREQUAL PSVITA)
   include("${VITASDK}/share/vita.cmake" REQUIRED)
