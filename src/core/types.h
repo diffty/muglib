@@ -48,6 +48,11 @@ typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int uint;
 
+typedef byte bool;
+#define true 1
+#define false 0
+
+
 typedef struct vect2d {
 	long x;
 	long y;
@@ -108,9 +113,5 @@ typedef struct rectf {
     float w;
     float h;
 } rectf;
-
-typedef int bool;
-#define true 1
-#define false 0
 
 #endif
