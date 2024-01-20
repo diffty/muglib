@@ -32,6 +32,7 @@
 #include "../logging/adapters/base.h"
 #include "../utils/list.h"
 #include "../utils/time.h"
+#include "../logging/logger.h"
 
 
 typedef struct System {
@@ -40,7 +41,7 @@ typedef struct System {
     double prevLoopTime;
     double deltaTime;
     InputSystem inputSys;
-    List logAdapterList;
+    List loggersList;
 
     #if TARGET_WIN
         LARGE_INTEGER tickFrequency;
@@ -66,7 +67,7 @@ void sys_init_system(System* pSystem);
 void sys_init_console();
 void sys_init_window(System* pSystem);
 void sys_init_main_loop(System* pSystem);
-void sys_add_logger_adapter(System* pSystem, LogAdapter* newLogAdapter);
+void sys_add_logger(System* pSystem, Logger* logger);
 void sys_log_to_all_adapters(System* pSystem, char* s);
 int sys_main_loop(System* pSystem);
 void sys_quit_loop(System* pSystem);

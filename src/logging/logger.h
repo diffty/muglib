@@ -1,6 +1,10 @@
 #ifndef LOGGING_LOGGER_H
 #define LOGGING_LOGGER_H
 
+#include <time.h>
+#include "adapters/base.h"
+#include "../utils/list.h"
+
 
 typedef enum ELogSeverity {
     ELogSeverity_DEBUG,
@@ -11,12 +15,24 @@ typedef enum ELogSeverity {
 } ELogSeverity;
 
 typedef struct LogRecord {
-    unsigned int time;
+    time_t time;
     ELogSeverity severity;
-    char* content;
+    char* message;
 } LogRecord;
 
+typedef struct LogFormatter {
+    char* (*formatterFunc)(LogRecord* s);
+} LogFormatter;
 
-void log_write(char* s);
+typedef struct Logger {
+    List logAdapterList;
+    LogFormatter* logFormatter;
+} Logger;
+
+
+void log_write(Logger* pLogger, char* s);
+void log_logger_set_formatter(Logger* pLogger, LogFormatter* logFormatter);
+void log_logger_add_adapter(Logger* pLogger, LogAdapter logAdapter);
+void log_logger_write_logrecord(Logger* pLogger, LogRecord* logRecord);
 
 #endif

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string.h>
 
 #ifdef TARGET_3DS
     #include <3ds.h>
@@ -39,7 +39,7 @@ System* sys_get_system_instance() {
 
 void sys_init_system(System* pSystem) {
     pSystem->isMainLoopRunning = 1;
-    pSystem->logAdapterList = List(LogAdapter*);
+    pSystem->loggersList = List(Logger*);
 	sys_init_main_loop(pSystem);
 }
 
@@ -49,16 +49,24 @@ void sys_init_main_loop(System* pSystem) {
 	pSystem->deltaTime = pSystem->startLoopTime - pSystem->prevLoopTime;
 }
 
-void sys_add_logger_adapter(System* pSystem, LogAdapter* newLogAdapter) {
-    lst_append(&pSystem->logAdapterList, &newLogAdapter);
+void sys_add_logger(System* pSystem, Logger* logger) {
+    lst_append(&pSystem->loggersList, &logger);
 }
 
-void sys_log_to_all_adapters(System* pSystem, char* s) {
+void sys_log_to_all_adapters(System* pSystem, char* s) {    
+    LogRecord newLogRecord;
+    newLogRecord.time = time(NULL);
+    newLogRecord.severity = ELogSeverity_DEBUG;
+    newLogRecord.message = malloc(strlen(s));
+    strcpy(newLogRecord.message, s);
+
     int i;
-    for (i = 0; i < pSystem->logAdapterList.count; i++) {
-        LogAdapter* currLogAdapter = *((LogAdapter**) lst_get(&pSystem->logAdapterList, i));
-        currLogAdapter->printFunc(s);
+    for (i = 0; i < pSystem->loggersList.count; i++) {
+        Logger* currLogger = *((Logger**) lst_get(&pSystem->loggersList, i));
+        log_logger_write_logrecord(currLogger, &newLogRecord);
     }
+
+    free(newLogRecord.message);
 }
 
 void sys_init_console() {
