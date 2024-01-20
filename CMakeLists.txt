@@ -52,6 +52,7 @@ add_library(${PROJECT_NAME}
   src/utils/array.c
   src/utils/list.c
   src/utils/strings.c
+  src/logging/logger.c
   src/utils/linked_list.c
   src/graphics/drawing.c
   src/platform/defines.h

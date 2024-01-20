@@ -7,13 +7,14 @@
 #include "memory.h"
 
 
-String str_create(int size, int alignment) {
+String str_create(char* s, int alignment) {
     String newStr;
-    newStr.size = size + 1;
+    newStr.size = strlen(s) + 1;
     newStr.alignment = alignment;
     newStr.alignedSize = calculate_size_with_padding(newStr.size, alignment);
     newStr.data = (char*) malloc(newStr.alignedSize);
     memset(newStr.data, '\0', newStr.alignedSize);
+    memmove(newStr.data, s, newStr.size);
     return newStr;
 }
 

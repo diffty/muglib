@@ -5,7 +5,7 @@
 
 
 int main() {
-    String testStr = str_create(0, 4);
+    String testStr = str_create("", 4);
 
     str_set(&testStr, "testpipi");
     printf("%s\n", testStr.data);
@@ -25,7 +25,7 @@ int main() {
     printf("%s\n", testStr.data);
     str_free(&testStr);
     
-    String concatTest = String(0);
+    String concatTest = String("proutpipi");
     str_concat(&concatTest, "ok");
     str_concat(&concatTest, "oui");
     str_concat(&concatTest, "koiiiiiii");

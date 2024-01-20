@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#define String(size) str_create(size, 4)
+#define String(s) str_create(s, 4)
 
 
 typedef struct String {
@@ -14,7 +14,7 @@ typedef struct String {
 } String;
 
 
-String str_create(int size, int alignment);
+String str_create(char* s, int alignment);
 void str_free(String* s);
 void str_resize(String* s, int newSize);
 void str_set(String* s, char* newStr);
