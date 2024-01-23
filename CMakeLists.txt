@@ -76,6 +76,10 @@ add_executable(test_log tests/test_log.c)
 add_test(NAME test_log COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_log)
 target_link_libraries(test_log ${PROJECT_NAME})
 
+add_executable(test_input tests/test_input.c)
+add_test(NAME test_input COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_input)
+target_link_libraries(test_input ${PROJECT_NAME})
+
 IF (NOT WIN32)
   target_link_libraries(${PROJECT_NAME}
     m
