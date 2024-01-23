@@ -58,6 +58,12 @@ add_library(${PROJECT_NAME}
   src/platform/defines.h
 )
 
+add_subdirectory("deps/SDL/" "build" EXCLUDE_FROM_ALL)
+
+target_link_libraries(${PROJECT_NAME}
+  SDL2
+)
+
 add_executable(test_str tests/test_str.c)
 add_test(NAME test_str COMMAND ${CMAKE_BINARY_OUTPUT_DIRECTORY}/test_str)
 target_link_libraries(test_str ${PROJECT_NAME})
