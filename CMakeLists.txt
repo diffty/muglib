@@ -60,6 +60,8 @@ add_library(${PROJECT_NAME}
 
 add_subdirectory("deps/SDL/" "build" EXCLUDE_FROM_ALL)
 
+add_compile_definitions(TARGET_${PLATFORM_TARGET_UPPER})
+
 target_link_libraries(${PROJECT_NAME}
   SDL2
 )
@@ -85,6 +87,8 @@ IF (NOT WIN32)
     m
   )
 ENDIF()
+
+target_compile_options(${PROJECT_NAME} PUBLIC -D TARGET_${PLATFORM_TARGET_UPPER})
 
 if(PLATFORM_TARGET STREQUAL PSVITA)
   include("${VITASDK}/share/vita.cmake" REQUIRED)

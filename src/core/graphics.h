@@ -32,7 +32,8 @@ typedef struct GraphicsSystem {
     #endif
 
     #if TARGET_SDL || TARGET_SDL2
-        SDL_Surface* windowSurface;
+        SDL_Surface* pSDLDrawSurface;
+        SDL_Surface* pSDLWindowSurface;
     #endif
 
     drawbuffer* framebuffer;

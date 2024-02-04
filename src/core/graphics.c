@@ -6,6 +6,7 @@
 
 #include "../graphics/drawing.h"
 #include "constants.h"
+#include "system.h"
 
 #ifdef TARGET_PSVITA
     #include <psp2/display.h>
@@ -13,6 +14,9 @@
     #include <psp2/kernel/threadmgr.h>
 #endif
 
+#if TARGET_SDL || TARGET_SDL2
+    #include "SDL_rect.h"
+#endif
 
 // Hack because there's missing symbols in SDL1.2 derp
 #if (TARGET_SDL || TARGET_SDL2) && _MSC_VER > 1700
@@ -84,9 +88,9 @@ void gfx_init_graphics_system(GraphicsSystem* pGfxSys) {
                                                         32,
                                                         0,0,0,0);
 
-        pGfxSys->pSDLScreenSurface = pGfxSys->sys->getWindowSurface();
+        pGfxSys->pSDLWindowSurface = gfx_get_window_surface(pGfxSys);
 
-        pGfxSys->framebuffer[0].buffer = (uint8*) m_pSDLDrawSurface->pixels;
+        pGfxSys->framebuffer[0].buffer = (uint8*) pGfxSys->pSDLDrawSurface->pixels;
         pGfxSys->framebuffer[0].reverse = true;
     
     #elif TARGET_PSVITA
@@ -148,7 +152,7 @@ void gfx_init_window(GraphicsSystem* pGfxSys) {
                 printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
             }
 
-            pGfxSys->pWindowSurface = SDL_GetWindowSurface(pGfxSys->window);
+            pGfxSys->pSDLWindowSurface = SDL_GetWindowSurface(pGfxSys->window);
         }
 
     #endif
@@ -175,7 +179,7 @@ void gfx_flush_buffer() {
     #endif
 }
 
-void gfx_swap_buffer() {
+void gfx_swap_buffer(GraphicsSystem* pGfxSys) {
     #ifdef TARGET_3DS
         gfxSwapBuffers();
 
@@ -185,9 +189,11 @@ void gfx_swap_buffer() {
         SDL_Flip(m_pSDLScreenSurface);
 
     #elif TARGET_SDL2
-        SDL_BlitScaled(m_pSDLDrawSurface, &m_drawBufBlitRect, m_pSDLScreenSurface, &m_screenBufBlitRect);
-        SDL_UpdateWindowSurface(m_sys->getWindow());
+        SDL_Rect drawBufBlitRect = {pGfxSys->drawBufBlitRect.x, pGfxSys->drawBufBlitRect.y, pGfxSys->drawBufBlitRect.w, pGfxSys->drawBufBlitRect.h};
+        SDL_Rect screenBufBlitRect = {pGfxSys->screenBufBlitRect.x, pGfxSys->screenBufBlitRect.y, pGfxSys->screenBufBlitRect.w, pGfxSys->screenBufBlitRect.h};
 
+        SDL_BlitScaled(pGfxSys->pSDLDrawSurface, &drawBufBlitRect, pGfxSys->pSDLWindowSurface, &screenBufBlitRect);
+        SDL_UpdateWindowSurface(gfx_get_window(pGfxSys));
     #endif
 }
 
@@ -201,12 +207,12 @@ void gfx_wait_for_blank() {
     #endif
 }
 
-void gfx_exit() {
+void gfx_exit(GraphicsSystem* pGfxSys) {
     #ifdef TARGET_3DS
         gfxExit();
 
     #elif TARGET_SDL || TARGET_SDL2
-        SDL_FreeSurface(m_pSDLScreenSurface);
+        SDL_FreeSurface(pGfxSys->pSDLDrawSurface);
 
     #endif
 }
@@ -219,7 +225,7 @@ SDL_Window* gfx_get_window(GraphicsSystem* pGfxSys) {
 
 #if TARGET_SDL || TARGET_SDL2
 SDL_Surface* gfx_get_window_surface(GraphicsSystem* pGfxSys) {
-	return pGfxSys->pWindowSurface;
+	return pGfxSys->pSDLWindowSurface;
 }
 #endif
 
