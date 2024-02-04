@@ -1,3 +1,6 @@
+#ifndef INPUT_IME
+#define INPUT_IME
+
 #include <psp2/libime.h>
 
 
@@ -85,3 +88,4 @@ void ime_update(ImeSystem* imeSys) {
     #endif
 }
 
+#endif

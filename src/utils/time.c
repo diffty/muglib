@@ -10,7 +10,6 @@
 #endif
 
 #ifdef TARGET_SDL2
-#include <cstdio>
 #include <SDL2/SDL.h>
 #endif
 
