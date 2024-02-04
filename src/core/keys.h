@@ -131,7 +131,7 @@ typedef enum EKey {
     KEYB_KP_PERIOD,
 } EKey;
 
-typedef enum EJoy {
+typedef enum EJoyButton {
 	JOY_BTN_1,
 	JOY_BTN_2,
 	JOY_BTN_3,
@@ -157,8 +157,8 @@ typedef enum EJoy {
     JOY_BTN_R1,
     JOY_BTN_R2,
     JOY_BTN_R3
-} EJoy;
+} EJoyButton;
 
-int get_platform_joy_button_code(EJoy muglibJoyBtnCode);
+int get_platform_joy_button_code(EJoyButton muglibJoyBtnCode);
 
 #endif

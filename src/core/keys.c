@@ -16,7 +16,7 @@
 #endif
 
 
-int get_platform_joy_button_code(EJoy muglibJoyBtnCode) {
+int get_platform_joy_button_code(EJoyButton muglibJoyBtnCode) {
     #ifndef NO_TARGET_SPECIFIED
         return JOY_BUTTON_MAPPING[muglibJoyBtnCode];
     #else

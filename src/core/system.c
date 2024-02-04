@@ -1,4 +1,5 @@
 #include "system.h"
+#include "input.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,7 +10,6 @@
 #endif
 
 #ifdef TARGET_SDL2
-    #include <cstdio>
     #include <SDL2/SDL.h>
 #endif
 
@@ -41,6 +41,7 @@ void sys_init_system(System* pSystem) {
     pSystem->isMainLoopRunning = 1;
     pSystem->loggersList = List(Logger*);
 	sys_init_main_loop(pSystem);
+    inp_init_input_system(&pSystem->inputSys);
 }
 
 void sys_init_main_loop(System* pSystem) {
@@ -131,7 +132,7 @@ int sys_main_loop(System* pSystem) {
         return aptMainLoop();
 
     #elif TARGET_SDL || TARGET_SDL2
-        SDL_Event sdlEvent;
+        /*SDL_Event sdlEvent;
 
         while (SDL_PollEvent(&sdlEvent) != 0) {
             if (sdlEvent.type == SDL_QUIT) {
@@ -152,7 +153,7 @@ int sys_main_loop(System* pSystem) {
 
                 pSystem->inputSys.RegisterMouseEvent(sdlEvent.type, mousePos, sdlEvent.button.button);
             }
-        }
+        }*/
 
         return pSystem->isMainLoopRunning;
 
